@@ -3,12 +3,13 @@ import {StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, PanR
 import Video from 'react-native-video';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import _ from 'lodash';
+import VideoRepository from '../repositories/VideoRepository'
 
 export default class VideoPlayer extends Component {  
     constructor(props) {
         super(props);
-        this.state = {            
-            // Video
+        this.videoRepository = new VideoRepository();
+        this.state = {     
             resizeMode: this.props.resizeMode,
             paused: this.props.paused,
             muted: this.props.muted,
@@ -27,6 +28,7 @@ export default class VideoPlayer extends Component {
         this.seekWidth = 0;
         this.controlTimeoutDelay = 15000;
         this.controlTimeout = null;
+        this.videoConfig = null;
 
         this.mounted = false;
         this.rates = [
@@ -56,6 +58,7 @@ export default class VideoPlayer extends Component {
                 MAX_VALUE: 360,
             }
         };
+        this.loadConfig();
     }
 
     componentDidMount() {
@@ -64,10 +67,13 @@ export default class VideoPlayer extends Component {
     }
 
     _onChangeRate = () => {
+        var rate = this.state.rate;
         if(this.state.rate < this.rates.length - 1)
-            this.setState({rate: this.state.rate + 1});
+            rate= this.state.rate + 1;
         else
-            this.setState({rate: 0});
+            rate = 0;
+        this.updateConfig(rate);
+        this.setState({rate});
     }
 
     _onTogglePaused = () => {
@@ -99,6 +105,18 @@ export default class VideoPlayer extends Component {
         this._toggleControls();
 
         this.setState({lastScreenPress: time});
+    }
+
+    async loadConfig(){
+       this.videoConfig = await this.videoRepository.getConfig();
+       this.state.rate = this.videoConfig.rate;
+    }
+
+    async updateConfig(rate){
+        if(this.videoConfig){
+            this.videoConfig.rate = rate;
+            this.videoRepository.setConfig(this.videoConfig);
+        }
     }
 
     setControlTimeout() {
@@ -341,7 +359,7 @@ export default class VideoPlayer extends Component {
                         style={styles.backgroundVideo}
                     />
                     <View style={styles.topControls}>
-                        <TouchableOpacity onPress={this._onBack} style={styles.btnControl}>
+                        <TouchableOpacity onPress={this.props.onBack} style={styles.btnControl}>
                             <Icon name={"angle-left"} size={18} color="#fff" />
                         </TouchableOpacity>
                         <Text style={styles.time}>{this.props.title}</Text>
