@@ -35,6 +35,32 @@ export default class Sala extends Component {
         }
         this.setState({rotas, loaded:true});
     }
+
+    // renderText(rota){
+    //     if(rota.itemAprendizagemEtiquetas){
+    //         var links = rota.itemAprendizagemEtiquetas.filter(item => {
+    //             if(!item.valorEtiqueta)
+    //                 return false;
+    //             if(item.valorEtiqueta.indexOf('conteudosdigitais.uninter.com') != -1)
+    //                 return true;
+    //             return false;
+    //         });
+    //         if(links.length > 0){
+    //             return (
+    //                 <TouchableOpacity onPress={() => Actions.videoScreen({src:this.state.video, title: `Video ${(this.props.index + 1)}`})}>
+    //                     <View style={styles.container}>
+    //                         <Text style={styles.text}>Texto da Aula</Text>
+    //                         <TouchableOpacity onPress={this._onToggleDownload}>
+    //                             <Icon name={this.state.downloaded ? "times" : "download"} size={20} color={Colors.blue} style={styles.btnControl}/>
+    //                         </TouchableOpacity>
+    //                     </View>
+    //                 </TouchableOpacity>
+    //             );
+    //             links[0].valorEtiqueta
+    //         }
+    //     }
+    //     return null;
+    // }
     
     render() {
         const rotas = this.state.rotas.map(rota => <Videos rota={rota} />)
