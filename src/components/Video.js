@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text, View, TouchableOpacity, StyleSheet, PermissionsAndroid, Alert } from 'react-native'
 import { Actions } from 'react-native-router-flux';  
 import Colors from '../assets/Colors'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -27,14 +27,30 @@ export default class Video extends Component {
 
     _onToggleDownload = async () => {
         if(this.state.downloaded){
-            await this.videoRepository.delete(this.props.video);
-            this.setState({video: this.props.video});
+            Alert.alert(
+              'Remover Video',
+              'Deseja realmente remover o video?',
+              [
+                {
+                  text: 'Não',
+                  onPress: () => console.log('Canceled'),
+                  style: 'cancel',
+                },
+                {text: 'Sim', onPress: async () => {
+                  await this.videoRepository.delete(this.props.video);
+                  this.setState({video: this.props.video});
+                  this.setState({downloaded:!this.state.downloaded});
+                }},
+              ],
+              {cancelable: false},
+            );
         }else{
+            await this.requestFolderPermission();
             await this.videoRepository.download(this.props.video);
             let videopath = await this.videoRepository.getFilePath(this.props.video)
             this.setState({video: videopath});
+            this.setState({downloaded:!this.state.downloaded});
         }
-        this.setState({downloaded:!this.state.downloaded});
     }
 
     requestFolderPermission = async () => {

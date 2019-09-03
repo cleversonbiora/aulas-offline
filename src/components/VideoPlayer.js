@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback, PanResponder, Animated, Easing} from 'react-native';
 import Video from 'react-native-video';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -26,7 +26,7 @@ export default class VideoPlayer extends Component {
         };
         this.seekPanResponder = PanResponder;
         this.seekWidth = 0;
-        this.controlTimeoutDelay = 15000;
+        this.controlTimeoutDelay = 5000;
         this.controlTimeout = null;
         this.videoConfig = null;
 
@@ -358,25 +358,28 @@ export default class VideoPlayer extends Component {
 
                         style={styles.backgroundVideo}
                     />
-                    <View style={styles.topControls}>
-                        <TouchableOpacity onPress={this.props.onBack} style={styles.btnControl}>
-                            <Icon name={"angle-left"} size={18} color="#fff" />
-                        </TouchableOpacity>
-                        <Text style={styles.time}>{this.props.title}</Text>
-                        <TouchableOpacity onPress={this._onChangeRate} style={styles.btnControl}>
-                            <Text style={styles.iconText}>{`${this.rates[this.state.rate]}x`}</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.bottomControls}>
-                        {this.renderSeekbar()}
-                        <View style={styles.bottomControlsButtons}>
-                            <Text style={styles.time}>{this.formatTime(this.state.currentTime)}</Text>
-                            <TouchableOpacity onPress={this._onTogglePaused} style={styles.btnControl}>
-                                <Icon name={this.state.paused ? "play" : "pause"} size={18} color="#fff" />
+                    {this.state.showControls &&
+                    <Fragment>
+                        <View style={styles.topControls}>
+                            <TouchableOpacity onPress={this.props.onBack} style={styles.btnControl}>
+                                <Icon name={"angle-left"} size={18} color="#fff" />
                             </TouchableOpacity>
-                            <Text style={styles.time}>{this.formatTime(this.state.duration)}</Text>
+                            <Text style={styles.time}>{this.props.title}</Text>
+                            <TouchableOpacity onPress={this._onChangeRate} style={styles.btnControl}>
+                                <Text style={styles.iconText}>{`${this.rates[this.state.rate]}x`}</Text>
+                            </TouchableOpacity>
                         </View>
-                    </View>
+                        <View style={styles.bottomControls}>
+                            {this.renderSeekbar()}
+                            <View style={styles.bottomControlsButtons}>
+                                <Text style={styles.time}>{this.formatTime(this.state.currentTime)}</Text>
+                                <TouchableOpacity onPress={this._onTogglePaused} style={styles.btnControl}>
+                                    <Icon name={this.state.paused ? "play" : "pause"} size={18} color="#fff" />
+                                </TouchableOpacity>
+                                <Text style={styles.time}>{this.formatTime(this.state.duration)}</Text>
+                            </View>
+                        </View>
+                    </Fragment>}
                 </View>
             </TouchableWithoutFeedback>
         )
